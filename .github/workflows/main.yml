@@ -17,6 +17,10 @@ on:
 jobs:
   # This workflow contains a single job called "build"
   build:
+    env:
+    
+      SPECFLOW_PROJECT: SpecFlow.Ejemplo
+      
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     container: wakoagui/mono:latest
@@ -36,3 +40,12 @@ jobs:
 
       - name: Test
         run: dotnet test
+      
+      - name:  Instalar generador de documentacion
+        run: dotnet tool install --global SpecFlow.Plus.LivingDoc.CLI
+      
+      - name: Generate LivingDoc documentation
+        run: |
+          export PATH="$PATH:/github/home/.dotnet/tools"
+          livingdoc test-assembly ./$SPECFLOW_PROJECT/bin/Debug/netcoreapp3.1/$SPECFLOW_PROJECT.dll -t ./$SPECFLOW_PROJECT/bin/Debug/netcoreapp3.1/TestExecution.json --output ./docs
+        
